@@ -1,4 +1,3 @@
-```markdown:README.md
 # ACS Language Compiler
 
 Welcome to the ACS Language project. This document provides a brief overview of how to compile and use the ACS compiler to work with the ACS language, a custom language focusing on simplicity and efficiency. **Currently, the implementation supports only the `println` functionality, as this is just a testing compiler**, with plans to extend it further.
