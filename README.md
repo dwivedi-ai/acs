@@ -30,4 +30,8 @@ The ACS language is in its early stages, with only the print functionality curre
 
 Contributions to the ACS language are welcome. Whether you're interested in fixing bugs, adding new features, or improving documentation, your help is appreciated. Please feel free to fork the repository, make your changes, and submit a pull request.
 
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
 Thank you for your interest in the ACS language project. We look forward to your contributions and to growing the capabilities of ACS together.
