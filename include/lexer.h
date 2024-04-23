@@ -11,6 +11,8 @@ enum class TokenType {
     PRINT,
     PRINTLN,
     IDENTIFIER,
+    LET,
+    EQUAL,
     SEMI,
     END,
 };

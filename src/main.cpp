@@ -34,19 +34,19 @@ int main(int argc, char *argv[]) {
         std::string generatedCode = generateCCode(ast);
         finalCode += generatedCode;
     }
-    std::string file_name_c = file_name.substr(0, file_name_length - 4) + ".c";
-    std::string preprocessors = "#include <stdio.h>\n";
+    std::string file_name_cpp = "../build/" + file_name.substr(0, file_name_length - 4) + ".cpp";
+    std::string preprocessors = "#include <iostream>\n";
     std::string mainDefinition = "int main(int argc, char* argv[]) {\n";
     std::string mainClosure = "return 0;\n}";
-    std::ofstream output_file(file_name_c);
+    std::ofstream output_file(file_name_cpp);
     output_file << preprocessors;
     output_file << mainDefinition;
     output_file << finalCode;
     output_file << mainClosure;
     output_file.close();
-    std::string gccCommand = "gcc " + file_name_c + " -o ../build/output";
+    std::string gccCommand = "g++ " + file_name_cpp + " -o ../build/output";
     system(gccCommand.c_str());
     system("../build/output");
-    system(("rm -rf " + file_name_c).c_str());
+    system(("rm -rf " + file_name_cpp).c_str());
     return 0;
 }

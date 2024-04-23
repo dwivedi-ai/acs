@@ -24,7 +24,27 @@ To compile this file, simply run the `acs` executable with the ACS file as an ar
 
 ## Future Implementations
 
-The ACS language is in its early stages, with only the print functionality currently implemented. Future updates will include more language features such as variables, control structures, and more advanced data types. Stay tuned for updates.
+The ACS language is in its early stages, with variable declaration, printing strings, and printing variables using `<<` like in `cout` currently implemented. Future updates will include more language features such as control structures and more advanced data types. Stay tuned for updates.
+
+### Syntax Examples
+
+#### Variable Declaration:
+```acs
+let x = 10;
+```
+
+#### Printing Variables:
+```acs
+println(x);
+```
+
+#### Printing Statements:
+```acs
+println("hello, world");
+print("hello, world");
+```
+
+
 
 ## Contributing
 

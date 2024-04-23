@@ -8,8 +8,32 @@ ASTNode* parse(const std::vector<Token>& tokens) {
     ASTNode* root = new ASTNode{TokenType::END, ""};
     for (const auto& token : tokens) {
         if (token.type == TokenType::PRINTLN) {
+            ASTNode* printlnNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(printlnNode);
+        }
+        if (token.type == TokenType::PRINT) {
             ASTNode* printNode = new ASTNode{token.type, token.value};
             root -> children.push_back(printNode);
+        }
+        if (token.type == TokenType::LET) {
+            ASTNode* letNode = new ASTNode{token.type, token.value};
+            root->children.push_back(letNode);
+        }
+        if (token.type == TokenType::IDENTIFIER) {
+            ASTNode* identifierNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(identifierNode);
+        }
+        if (token.type == TokenType::EQUAL) {
+            ASTNode* equalNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(equalNode);
+        }
+        if (token.type == TokenType::NUMBER) {
+            ASTNode* numberNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(numberNode);
+        }
+        if (token.type == TokenType::SEMI) {
+            ASTNode* semiNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(semiNode);
         }
     }
     return root;
@@ -18,7 +42,25 @@ ASTNode* parse(const std::vector<Token>& tokens) {
 std::string generateCCode(ASTNode* node) {
     std::string generatedCode = "";
     if (node -> type == TokenType::PRINTLN) {
-        generatedCode += "printf(\"" + node -> value + "\\n\");\n";
+        generatedCode += "std::cout << " + node -> value + " << std::endl";
+    }
+    if (node -> type == TokenType::PRINT) {
+        generatedCode += "std::cout << " + node -> value + "";
+    }
+    if (node->type == TokenType::LET) {
+        generatedCode += "auto ";
+    }
+    if (node -> type == TokenType::IDENTIFIER) {
+        generatedCode += node -> value;
+    }
+    if (node -> type == TokenType::EQUAL) {
+        generatedCode += " = ";
+    }
+    if (node -> type == TokenType::NUMBER) {
+        generatedCode += node -> value;
+    }
+    if (node -> type == TokenType::SEMI) {
+        generatedCode += ";\n";
     }
     for (auto* child : node -> children) {
         generatedCode += generateCCode(child);
