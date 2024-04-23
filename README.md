@@ -19,8 +19,8 @@ After compilation, you can use the `acs` executable to compile ACS language file
 
 #### Variable Declaration:
 ```acs
-let x = 10;
-let y = 9.99;
+let x: 10;
+let y: 9.99;
 ```
 
 #### Printing Variables:
