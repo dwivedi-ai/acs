@@ -36,7 +36,17 @@ println("hello, world");
 print("hello, world");
 ```
 
+#### Evaluating Expressions:
+```acs
+x: x + 10;
+y: y / 3;
+```
 
+#### Evaluating Expressions inside Print Statements:
+```acs
+println("Value of X: " << x / 2);
+print("Value of Y: " << y + 3 << "\n");
+```
 
 To compile this file, simply run the `acs` executable with the ACS file as an argument. Note that further usage instructions will be provided as the language features are expanded.
 

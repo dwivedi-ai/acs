@@ -35,6 +35,22 @@ ASTNode* parse(const std::vector<Token>& tokens) {
             ASTNode* semiNode = new ASTNode{token.type, token.value};
             root -> children.push_back(semiNode);
         }
+        if (token.type == TokenType::PLUS) {
+            ASTNode* plusNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(plusNode);
+        }
+        if (token.type == TokenType::MINUS) {
+            ASTNode* minusNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(minusNode);
+        }
+        if (token.type == TokenType::MULTIPLY) {
+            ASTNode* mulNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(mulNode);
+        }
+        if (token.type == TokenType::DIVIDE) {
+            ASTNode* divNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(divNode);
+        }
     }
     return root;
 }
@@ -61,6 +77,18 @@ std::string generateCCode(ASTNode* node) {
     }
     if (node -> type == TokenType::SEMI) {
         generatedCode += ";\n";
+    }
+    if (node -> type == TokenType::PLUS) {
+        generatedCode += " + ";
+    }
+    if (node -> type == TokenType::MINUS) {
+        generatedCode += " - ";
+    }
+    if (node -> type == TokenType::MULTIPLY) {
+        generatedCode += " * ";
+    }
+    if (node -> type == TokenType::DIVIDE) {
+        generatedCode += " / ";
     }
     for (auto* child : node -> children) {
         generatedCode += generateCCode(child);

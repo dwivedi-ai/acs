@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 enum class TokenType {
     NUMBER,
     PLUS,
@@ -25,6 +26,7 @@ class Lexer {
     std::string file_name;
     std::ifstream input_file;
     std::vector<std::vector<Token>> tokens;
+    std::unordered_map<std::string, TokenType> exprTable;
 public:
     Lexer(std::string file_name);
     void tokenize();
