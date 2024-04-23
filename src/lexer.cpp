@@ -110,7 +110,7 @@ void Lexer::tokenize() {
                     tokenLine.push_back({TokenType::NUMBER, value});
                 } else {
                     std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
-                    std::cerr << "expected number after '=' at line number " << line_number << std::endl;
+                    std::cerr << "expected number after ':' at line number " << line_number << std::endl;
                     exit(1);
                 }
 
