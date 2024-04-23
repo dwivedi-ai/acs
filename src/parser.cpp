@@ -20,7 +20,7 @@ std::string generateCCode(ASTNode* node) {
     if (node -> type == TokenType::PRINTLN) {
         generatedCode += "printf(\"" + node -> value + "\\n\");\n";
     }
-    for (auto* child : node ->children) {
+    for (auto* child : node -> children) {
         generatedCode += generateCCode(child);
     }
     return generatedCode;

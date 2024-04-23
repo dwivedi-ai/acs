@@ -18,11 +18,12 @@ Lexer::Lexer(std::string file_name) {
         exit(1);
     }
 }
-
+using namespace std;
 void Lexer::tokenize() {
     std::string line;
     while (std::getline(input_file, line)) {
         size_t pos = 0;
+        std::vector<Token> tokenLine;
         while (pos < line.size()) {
             if ((pos = line.find("println", pos)) != std::string::npos) {
                 pos += 7; // Move past "print"
@@ -35,14 +36,14 @@ void Lexer::tokenize() {
                                                while (pos < line.size() && line[pos] != '\"') pos++; // Find the closing quote
                         if (pos < line.size()) {
                             std::string strLiteral = line.substr(start, pos - start);
-                            tokens.push_back({TokenType::PRINTLN, strLiteral});
+                            tokenLine.push_back({TokenType::PRINTLN, strLiteral});
                             pos++; // Move past the closing quote
                             while (pos < line.size() && std::isspace(line[pos])) pos++; // Skip spaces
                             if (pos < line.size() && line[pos] == ')') {
                                 pos++; // Move past ")"
                                 while (pos < line.size() && std::isspace(line[pos])) pos++; // Skip spaces
                                 if (pos < line.size() && line[pos] == ';') {
-                                    tokens.push_back({TokenType::SEMI, ";"});
+                                    tokenLine.push_back({TokenType::SEMI, ";"});
                                     pos++; // Move past ";"
                                 }
                             }
@@ -51,10 +52,11 @@ void Lexer::tokenize() {
                 }
             }
         }
+        tokens.push_back(tokenLine);
     }
     input_file.close();
 }
 
-std::vector<Token> Lexer::getTokens() {
+std::vector<std::vector<Token>> Lexer::getTokens() {
     return tokens;
 }

@@ -27,9 +27,13 @@ int main(int argc, char *argv[]) {
     }
     Lexer obj(file_name);
     obj.tokenize();
-    std::vector<Token> tokens = obj.getTokens();
-    ASTNode* ast = parse(tokens);
-    std::string generatedCode = generateCCode(ast);
+    std::vector<std::vector<Token>> tokens = obj.getTokens();
+    std::string finalCode = "";
+    for (const auto &token: tokens) {
+        ASTNode* ast = parse(token);
+        std::string generatedCode = generateCCode(ast);
+        finalCode += generatedCode;
+    }
     std::string file_name_c = file_name.substr(0, file_name_length - 4) + ".c";
     std::string preprocessors = "#include <stdio.h>\n";
     std::string mainDefinition = "int main(int argc, char* argv[]) {\n";
@@ -37,7 +41,7 @@ int main(int argc, char *argv[]) {
     std::ofstream output_file(file_name_c);
     output_file << preprocessors;
     output_file << mainDefinition;
-    output_file << generatedCode;
+    output_file << finalCode;
     output_file << mainClosure;
     output_file.close();
     std::string gccCommand = "gcc " + file_name_c + " -o ../build/output";
