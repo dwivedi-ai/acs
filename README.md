@@ -13,29 +13,21 @@ This command compiles all `.cpp` files in the current directory, linking them wi
 
 ## Usage
 
-After compilation, you can use the `acs` executable to compile ACS language files. Since the current implementation primarily supports the print functionality, you can test it by creating a simple ACS file that uses the print command.
-
-Example `hello.acs`:
-```acs
-println("hello, acs world");
-```
-
-To compile this file, simply run the `acs` executable with the ACS file as an argument. Note that further usage instructions will be provided as the language features are expanded.
-
-## Future Implementations
-
-The ACS language is in its early stages, with variable declaration, printing strings, and printing variables using `<<` like in `cout` currently implemented. Future updates will include more language features such as control structures and more advanced data types. Stay tuned for updates.
+After compilation, you can use the `acs` executable to compile ACS language files. Since the current implementation primarily supports the print functionality, you can test it by creating a simple ACS file that uses the print command or variable declaration (strings not supported right now) and usage in print as shown below.
 
 ### Syntax Examples
 
 #### Variable Declaration:
 ```acs
 let x = 10;
+let y = 9.99;
 ```
 
 #### Printing Variables:
 ```acs
 println(x);
+println("Value of X: " << x);
+print("Value of Y: " << y << "\n");
 ```
 
 #### Printing Statements:
@@ -44,6 +36,13 @@ println("hello, world");
 print("hello, world");
 ```
 
+
+
+To compile this file, simply run the `acs` executable with the ACS file as an argument. Note that further usage instructions will be provided as the language features are expanded.
+
+## Future Implementations
+
+The ACS language is in its early stages, with variable declaration, printing strings, and printing variables using `<<` like in `cout` currently implemented. Future updates will include more language features such as control structures and more advanced data types. Stay tuned for updates.
 
 
 ## Contributing
