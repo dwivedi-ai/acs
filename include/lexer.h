@@ -22,9 +22,9 @@ struct Token {
 class Lexer {
     std::string file_name;
     std::ifstream input_file;
-    std::vector<Token> tokens;
+    std::vector<std::vector<Token>> tokens;
 public:
     Lexer(std::string file_name);
     void tokenize();
-    std::vector<Token> getTokens();
+    std::vector<std::vector<Token>> getTokens();
 };
