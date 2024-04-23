@@ -1,8 +1,10 @@
 let x: 23;
 let y: 23.989;
 print(y << "\n");
-println("Value of x: " << x + 3);
+println("Value of x + 3: " << x + 3);
 println("This is just a testing statement");
-println("Value of y/2: " << y / 2);
-y: y / 3 + 4;
-println(y + 10);
+println("Value of y / 2: " << y / 2);
+y: y + x + 10;
+x: x + y;
+println(x);
+println(y);     

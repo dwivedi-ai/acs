@@ -6,6 +6,7 @@
 #include <cctype>
 #include <unordered_map>
 #include <sstream>
+#include <algorithm>
 
 Lexer::Lexer(std::string file_name) : file_name(file_name), input_file(file_name) {
     if (!input_file.is_open()) {
@@ -45,6 +46,14 @@ void Lexer::tokenize() {
                 }
             }
             return true;
+        };
+        auto trim = [&](const std::string& line) {
+            size_t start = line.find_first_not_of(" \t");
+            size_t end = line.find_last_not_of(" \t");
+            if (start == std::string::npos) {
+                return std::string("");
+            }
+            return line.substr(start, end - start + 1);
         };
         if ((pos = line.find("println", pos)) != std::string::npos) {
             pos += 7;
@@ -141,6 +150,7 @@ void Lexer::tokenize() {
         }
         // evaluation expression
         if (checked == 0) {
+            line = trim(line);
             bool hasSemi = false;
             if (line[line.size() - 1] != ';') {
                 std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
@@ -160,17 +170,15 @@ void Lexer::tokenize() {
                     continue;
                 }
                 if ((pos = single_word.find(':')) != std::string::npos && single_word.size() != 1) {
-                    skipSpaces();
                     tokenLine.push_back({TokenType::IDENTIFIER, single_word.substr(0, pos)});
                     tokenLine.push_back({TokenType::EQUAL, "="});
-                    wasLastID = true;
+                    wasLastID = false;
+                    continue;
                 }
                 if (exprTable[single_word] == TokenType::IDENTIFIER && !wasLastID) {
-                    skipSpaces();
                     tokenLine.push_back({TokenType::IDENTIFIER, single_word});
                     wasLastID = true;
                 } else if (wasLastID) {
-                    skipSpaces();
                     if (single_word == "+") {
                         tokenLine.push_back({TokenType::PLUS, single_word});
                     }
