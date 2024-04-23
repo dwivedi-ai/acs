@@ -98,7 +98,7 @@ void Lexer::tokenize() {
 
             skipSpaces();
 
-            if (pos < line.size() && line[pos] == '=') {
+            if (pos < line.size() && line[pos] == ':') {
                 tokenLine.push_back({TokenType::EQUAL, "="});
                 pos++;
                 skipSpaces();

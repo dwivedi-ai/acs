@@ -1,5 +1,5 @@
-let x = 23;
-let y = 23.9;
+let x: 23;
+let y: 23.9;
 print(y << "\n");
 println("Value of x: " << x);
 println("This is just a testing statement");
