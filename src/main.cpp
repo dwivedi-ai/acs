@@ -3,7 +3,21 @@
 #include <fstream>
 #include "lexer.h"
 #include "parser.h"
+
+void versionDetails() {
+    std::cout << "ACS Language Compiler version 1.4.2\n";
+    std::cout << "Author: Ankit Dwivedi\n";
+    std::cout << "Repository: https://github.com/dwivedi-ai/acs.git\n";
+}
+
 int main(int argc, char *argv[]) {
+    if (argc == 2) {
+        std::string arg = argv[1];
+        if (arg == "--author" || arg == "-a") {
+            versionDetails();
+            return 0;
+        }
+    }
     if (argc == 1) {
         std::cout << "\033[1m";
         std::cout << "acs: ";
@@ -35,7 +49,7 @@ int main(int argc, char *argv[]) {
         finalCode += generatedCode;
     }
     std::string file_name_cpp = "../build/" + file_name.substr(0, file_name_length - 4) + ".cpp";
-    std::string preprocessors = "#include <iostream>\n";
+    std::string preprocessors = "#include <iostream>\n#include <string>\n";
     std::string mainDefinition = "int main(int argc, char* argv[]) {\n";
     std::string mainClosure = "return 0;\n}";
     std::ofstream output_file(file_name_cpp);

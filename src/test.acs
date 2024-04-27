@@ -1,4 +1,6 @@
 let x: 23;
+float test;
+int ar: 21;
 let y: 23.989;
 print(y << "\n");
 println("Value of x + 3: " << x + 3);
@@ -6,5 +8,8 @@ println("This is just a testing statement");
 println("Value of y / 2: " << y / 2);
 y: y + x + 10;
 x: x + y;
+print("Enter the value of test: ");
+scan(test);
+println(test * ar);
 println(x);
 println(y);

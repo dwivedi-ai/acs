@@ -21,6 +21,9 @@ After compilation, you can use the `acs` executable to compile ACS language file
 ```acs
 let x: 10;
 let y: 9.99;
+int a: 100;
+float b: 29.8;
+double p: 29.629;
 ```
 
 #### Printing Variables:
@@ -34,6 +37,12 @@ print("Value of Y: " << y << "\n");
 ```acs
 println("hello, world");
 print("hello, world");
+```
+
+#### Input Statements:
+```acs
+scan(x);
+scan(p);
 ```
 
 #### Evaluating Expressions:

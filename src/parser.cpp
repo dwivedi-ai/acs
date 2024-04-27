@@ -15,6 +15,10 @@ ASTNode* parse(const std::vector<Token>& tokens) {
             ASTNode* printNode = new ASTNode{token.type, token.value};
             root -> children.push_back(printNode);
         }
+        if (token.type == TokenType::SCAN) {
+            ASTNode* scanNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(scanNode);
+        }
         if (token.type == TokenType::LET) {
             ASTNode* letNode = new ASTNode{token.type, token.value};
             root->children.push_back(letNode);
@@ -51,6 +55,18 @@ ASTNode* parse(const std::vector<Token>& tokens) {
             ASTNode* divNode = new ASTNode{token.type, token.value};
             root -> children.push_back(divNode);
         }
+        if (token.type == TokenType::INT) {
+            ASTNode* intNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(intNode);
+        }
+        if (token.type == TokenType::FLOAT) {
+            ASTNode* floatNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(floatNode);
+        }
+        if (token.type == TokenType::DOUBLE) {
+            ASTNode* doubleNode = new ASTNode{token.type, token.value};
+            root -> children.push_back(doubleNode);
+        }
     }
     return root;
 }
@@ -63,8 +79,20 @@ std::string generateCCode(ASTNode* node) {
     if (node -> type == TokenType::PRINT) {
         generatedCode += "std::cout << " + node -> value + "";
     }
+    if (node -> type == TokenType::SCAN) {
+        generatedCode += "std::cin >> " + node -> value + "";
+    }
     if (node->type == TokenType::LET) {
         generatedCode += "auto ";
+    }
+    if (node -> type == TokenType::INT) {
+        generatedCode += "int ";
+    }
+    if (node -> type == TokenType::FLOAT) {
+        generatedCode += "float ";
+    }
+    if (node -> type == TokenType::DOUBLE) {
+        generatedCode += "double ";
     }
     if (node -> type == TokenType::IDENTIFIER) {
         generatedCode += node -> value;

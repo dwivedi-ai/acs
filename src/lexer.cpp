@@ -100,7 +100,188 @@ void Lexer::tokenize() {
         } else {
             pos = 0;
         }
+        if ((pos = line.find("scan", pos)) != std::string::npos) {
+            pos += 4;
+            skipSpaces();
+            expectAndSkip('(');
 
+            size_t start = pos;
+            size_t end = line.find_last_of(')');
+            if (end != std::string::npos) {
+                std::string strLiteral = line.substr(start, end - start);
+                tokenLine.push_back({TokenType::SCAN, strLiteral});
+                pos = end + 1;
+                skipSpaces();
+                if (line[pos] == ';') {
+                    tokenLine.push_back({TokenType::SEMI, ";"});
+                    pos++;
+                    skipSpaces();
+                }
+            }
+            checked = 1;
+        } else {
+            pos = 0;
+        }
+
+        if ((pos = line.find("int", pos)) != std::string::npos && pos == 0 && checked == 0) {
+            tokenLine.push_back({TokenType::INT, "int"});
+            pos += 3;
+            skipSpaces();
+            std::string identifier = "";
+            size_t start = pos;
+            while (pos < line.size() && std::isalpha(line[pos])) pos++;
+            if (start < pos) {
+                identifier = line.substr(start, pos - start);
+                tokenLine.push_back({TokenType::IDENTIFIER, identifier});
+            } else {
+                std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+                std::cerr << "expected identifier after 'int' at line number " << line_number << std::endl;
+                exit(1);
+            }
+
+            skipSpaces();
+
+            if (pos < line.size() && line[pos] == ':') {
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                pos++;
+                skipSpaces();
+
+                start = pos;
+                while (pos < line.size() && (std::isdigit(line[pos]) || line[pos] == '.')) pos++;
+                if (start < pos) {
+                    std::string value = line.substr(start, pos - start);
+                    tokenLine.push_back({TokenType::NUMBER, value});
+                } else {
+                    std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+                    std::cerr << "expected number after ':' at line number " << line_number << std::endl;
+                    exit(1);
+                }
+
+                skipSpaces();
+
+                if (line[pos] == ';') {
+                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    tokenLine.push_back({TokenType::SEMI, ";"});
+                    pos++;
+                    skipSpaces();
+                }
+            } else if (pos < line.size() && line[pos] == ';') {
+                exprTable[identifier] = TokenType::IDENTIFIER;
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                tokenLine.push_back({TokenType::NUMBER, "0.0"});
+                tokenLine.push_back({TokenType::SEMI, ";"});
+                skipSpaces();
+            }
+            checked = 1;
+        } else {
+            pos = 0;
+        }
+        if ((pos = line.find("float", pos)) != std::string::npos && pos == 0 && checked == 0) {
+            tokenLine.push_back({TokenType::FLOAT, "float"});
+            pos += 5;
+            skipSpaces();
+            std::string identifier = "";
+            size_t start = pos;
+            while (pos < line.size() && std::isalpha(line[pos])) pos++;
+            if (start < pos) {
+                identifier = line.substr(start, pos - start);
+                tokenLine.push_back({TokenType::IDENTIFIER, identifier});
+            } else {
+                std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+                std::cerr << "expected identifier after 'float' at line number " << line_number << std::endl;
+                exit(1);
+            }
+
+            skipSpaces();
+
+            if (pos < line.size() && line[pos] == ':') {
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                pos++;
+                skipSpaces();
+
+                start = pos;
+                while (pos < line.size() && (std::isdigit(line[pos]) || line[pos] == '.')) pos++;
+                if (start < pos) {
+                    std::string value = line.substr(start, pos - start);
+                    tokenLine.push_back({TokenType::NUMBER, value});
+                } else {
+                    std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+                    std::cerr << "expected number after ':' at line number " << line_number << std::endl;
+                    exit(1);
+                }
+
+                skipSpaces();
+
+                if (line[pos] == ';') {
+                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    tokenLine.push_back({TokenType::SEMI, ";"});
+                    pos++;
+                    skipSpaces();
+                }
+            } else if (pos < line.size() && line[pos] == ';') {
+                exprTable[identifier] = TokenType::IDENTIFIER;
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                tokenLine.push_back({TokenType::NUMBER, "0.0"});
+                tokenLine.push_back({TokenType::SEMI, ";"});
+                skipSpaces();
+            }
+            checked = 1;
+        } else {
+            pos = 0;
+        }
+        if ((pos = line.find("double", pos)) != std::string::npos && pos == 0 && checked == 0) {
+            tokenLine.push_back({TokenType::DOUBLE, "double"});
+            pos += 6;
+            skipSpaces();
+            std::string identifier = "";
+            size_t start = pos;
+            while (pos < line.size() && std::isalpha(line[pos])) pos++;
+            if (start < pos) {
+                identifier = line.substr(start, pos - start);
+                tokenLine.push_back({TokenType::IDENTIFIER, identifier});
+            } else {
+                std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+                std::cerr << "expected identifier after 'double' at line number " << line_number << std::endl;
+                exit(1);
+            }
+
+            skipSpaces();
+
+            if (pos < line.size() && line[pos] == ':') {
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                pos++;
+                skipSpaces();
+
+                start = pos;
+                while (pos < line.size() && (std::isdigit(line[pos]) || line[pos] == '.')) pos++;
+                if (start < pos) {
+                    std::string value = line.substr(start, pos - start);
+                    tokenLine.push_back({TokenType::NUMBER, value});
+                } else {
+                    std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+                    std::cerr << "expected number after ':' at line number " << line_number << std::endl;
+                    exit(1);
+                }
+
+                skipSpaces();
+
+                if (line[pos] == ';') {
+                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    tokenLine.push_back({TokenType::SEMI, ";"});
+                    pos++;
+                    skipSpaces();
+                }
+            } else if (pos < line.size() && line[pos] == ';') {
+                exprTable[identifier] = TokenType::IDENTIFIER;
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                tokenLine.push_back({TokenType::NUMBER, "0.0"});
+                tokenLine.push_back({TokenType::SEMI, ";"});
+                skipSpaces();
+            }
+            checked = 1;
+        } else {
+            pos = 0;
+        }
         if ((pos = line.find("let", pos)) != std::string::npos && pos == 0) {
             tokenLine.push_back({TokenType::LET, "let"});
             pos += 3;
@@ -143,6 +324,12 @@ void Lexer::tokenize() {
                     pos++;
                     skipSpaces();
                 }
+            } else if (pos < line.size() && line[pos] == ';') {
+                exprTable[identifier] = TokenType::IDENTIFIER;
+                tokenLine.push_back({TokenType::EQUAL, "="});
+                tokenLine.push_back({TokenType::NUMBER, "0.0"});
+                tokenLine.push_back({TokenType::SEMI, ";"});
+                skipSpaces();
             }
             checked = 1;
         } else {
