@@ -67,11 +67,32 @@ println("Value of X: " << x / 2);
 print("Value of Y: " << y + 3 << "\n");
 ```
 
+#### Conditionals (if / else):
+```acs
+int score: 72;
+
+if (score >= 90) {
+    println("Grade: A");
+} else if (score >= 70) {
+    println("Grade: B");
+} else {
+    println("Grade: C");
+}
+```
+
+- The condition goes in parentheses and the body in braces. `{` must end the `if (...)` / `else` line, and `}` goes on its own line or before `else`.
+- Comparison operators: `==`, `!=`, `<`, `<=`, `>`, `>=`. Combine conditions with `&&`, `||` and `!`, group them with parentheses, and use arithmetic (`+ - * /`) inside them.
+- Use `==` to compare; a single `=` is an error (assignment in ACS is `:`).
+- Any number of `else if` branches is allowed, `else` is optional, and blocks can be nested.
+- Variables declared inside a block exist only in that block.
+
+A complete example is in [`examples/if_else.acs`](examples/if_else.acs). After `make`, run it from the `examples` directory with `mkdir -p ../build && ../acs if_else.acs`. The test case `tests/examples/if_else.acs` covers nesting, `else` on its own line and block-scoped variables.
+
 To compile this file, simply run the `acs` executable with the ACS file as an argument. Note that further usage instructions will be provided as the language features are expanded.
 
 ## Future Implementations
 
-The ACS language is in its early stages, with variable declaration, printing strings, and printing variables using `<<` like in `cout` currently implemented. Future updates will include more language features such as control structures and more advanced data types. Stay tuned for updates.
+The ACS language is in its early stages, with variable declaration, printing strings, printing variables using `<<` like in `cout`, input, expressions and `if`/`else` conditionals currently implemented. Future updates will include more language features such as loops and more advanced data types. Stay tuned for updates.
 
 
 ## Contributing
