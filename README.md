@@ -7,9 +7,19 @@ Welcome to the ACS Language project. This document provides a brief overview of 
 To compile the ACS compiler, you will need to have `g++` installed on your system. The ACS compiler can be compiled by executing the following command in the terminal:
 
 ```bash
-g++ -I../include *.cpp -o acs
+make
 ```
-This command compiles all `.cpp` files in the current directory, linking them with headers located in the `../include` directory, and produces an executable named `acs`.
+This builds the compiler from `src/` and `include/` and produces an executable named `acs` in the repository root.
+
+## Tests
+
+Each example in `tests/examples/` is an `.acs` file with a matching `.expected` file holding its exact output (and an optional `.input` file piped to stdin for `scan`). Run them all with:
+
+```bash
+make test
+```
+
+After an intentional change in output, regenerate the expected files with `make update-tests` and review the diff before committing. The same tests run in GitHub Actions on every push and pull request.
 
 ## Usage
 

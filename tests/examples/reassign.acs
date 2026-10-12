@@ -1,0 +1,9 @@
+let x: 23;
+let y: 23.989;
+y: y + x + 10;
+x: x + y;
+println(x);
+println(y);
+int n: 3;
+n: n * n * n;
+println(n);

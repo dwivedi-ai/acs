@@ -1,0 +1,5 @@
+int a;
+float b;
+double c;
+let d;
+println(a << " " << b << " " << c << " " << d);

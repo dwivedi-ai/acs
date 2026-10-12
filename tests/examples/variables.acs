@@ -1,0 +1,10 @@
+let x: 10;
+let y: 9.99;
+int a: 100;
+float b: 29.8;
+double p: 29.629;
+println(x);
+println(y);
+println("a = " << a);
+println("b = " << b);
+print("p = " << p << "\n");

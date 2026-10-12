@@ -1,0 +1,9 @@
+int a: 17;
+int b: 5;
+double c: 7.5;
+println("a + b = " << a + b);
+println("a - b = " << a - b);
+println("a * b = " << a * b);
+println("a / b = " << a / b);
+println("c / 2 = " << c / 2);
+println("a + b * 2 = " << a + b * 2);
