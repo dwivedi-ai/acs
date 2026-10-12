@@ -8,6 +8,27 @@
 #include <sstream>
 #include <algorithm>
 
+static void fail(int line_number, const std::string& message) {
+    std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
+    std::cerr << message << " at line number " << line_number << std::endl;
+    exit(1);
+}
+
+static std::string trimLine(const std::string& line) {
+    size_t start = line.find_first_not_of(" \t\r");
+    if (start == std::string::npos) return "";
+    size_t end = line.find_last_not_of(" \t\r");
+    return line.substr(start, end - start + 1);
+}
+
+// true if `line` begins with `word` followed by a non-identifier character
+static bool startsWithWord(const std::string& line, const std::string& word) {
+    if (line.compare(0, word.size(), word) != 0) return false;
+    if (line.size() == word.size()) return true;
+    char c = line[word.size()];
+    return !(std::isalnum(c) || c == '_');
+}
+
 Lexer::Lexer(std::string file_name) : file_name(file_name), input_file(file_name) {
     if (!input_file.is_open()) {
         std::cerr << "\033[1macs: \033[1;31merror: \033[0m";
@@ -20,10 +41,16 @@ void Lexer::tokenize() {
     std::string line;
     int line_number = 0;
     while (std::getline(input_file, line)) {
+        line_number += 1;
+        line = trimLine(line);
         if (line.size() == 0) continue;
         size_t pos = 0;
         std::vector<Token> tokenLine;
-        line_number += 1;
+        if (lexControlFlow(line, line_number, tokenLine)) {
+            tokens.push_back(tokenLine);
+            continue;
+        }
+        canElse = false;
         int checked = 0;
         auto skipSpaces = [&]() {
             while (pos < line.size() && std::isspace(line[pos])) pos++;
@@ -160,13 +187,13 @@ void Lexer::tokenize() {
                 skipSpaces();
 
                 if (line[pos] == ';') {
-                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    declare(identifier);
                     tokenLine.push_back({TokenType::SEMI, ";"});
                     pos++;
                     skipSpaces();
                 }
             } else if (pos < line.size() && line[pos] == ';') {
-                exprTable[identifier] = TokenType::IDENTIFIER;
+                declare(identifier);
                 tokenLine.push_back({TokenType::EQUAL, "="});
                 tokenLine.push_back({TokenType::NUMBER, "0.0"});
                 tokenLine.push_back({TokenType::SEMI, ";"});
@@ -213,13 +240,13 @@ void Lexer::tokenize() {
                 skipSpaces();
 
                 if (line[pos] == ';') {
-                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    declare(identifier);
                     tokenLine.push_back({TokenType::SEMI, ";"});
                     pos++;
                     skipSpaces();
                 }
             } else if (pos < line.size() && line[pos] == ';') {
-                exprTable[identifier] = TokenType::IDENTIFIER;
+                declare(identifier);
                 tokenLine.push_back({TokenType::EQUAL, "="});
                 tokenLine.push_back({TokenType::NUMBER, "0.0"});
                 tokenLine.push_back({TokenType::SEMI, ";"});
@@ -266,13 +293,13 @@ void Lexer::tokenize() {
                 skipSpaces();
 
                 if (line[pos] == ';') {
-                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    declare(identifier);
                     tokenLine.push_back({TokenType::SEMI, ";"});
                     pos++;
                     skipSpaces();
                 }
             } else if (pos < line.size() && line[pos] == ';') {
-                exprTable[identifier] = TokenType::IDENTIFIER;
+                declare(identifier);
                 tokenLine.push_back({TokenType::EQUAL, "="});
                 tokenLine.push_back({TokenType::NUMBER, "0.0"});
                 tokenLine.push_back({TokenType::SEMI, ";"});
@@ -319,13 +346,13 @@ void Lexer::tokenize() {
                 skipSpaces();
 
                 if (line[pos] == ';') {
-                    exprTable[identifier] = TokenType::IDENTIFIER;
+                    declare(identifier);
                     tokenLine.push_back({TokenType::SEMI, ";"});
                     pos++;
                     skipSpaces();
                 }
             } else if (pos < line.size() && line[pos] == ';') {
-                exprTable[identifier] = TokenType::IDENTIFIER;
+                declare(identifier);
                 tokenLine.push_back({TokenType::EQUAL, "="});
                 tokenLine.push_back({TokenType::NUMBER, "0.0"});
                 tokenLine.push_back({TokenType::SEMI, ";"});
@@ -396,6 +423,166 @@ void Lexer::tokenize() {
         tokens.push_back(tokenLine);
     }
     input_file.close();
+    if (!scopes.empty()) {
+        fail(line_number, "expected '}' before end of file");
+    }
+}
+
+void Lexer::declare(const std::string& identifier) {
+    if (exprTable[identifier] == TokenType::IDENTIFIER) return;
+    exprTable[identifier] = TokenType::IDENTIFIER;
+    if (!scopes.empty()) scopes.back().push_back(identifier);
+}
+
+// Handles `if (cond) {`, `} else if (cond) {`, `} else {`, `else {` and `}`.
+// Returns false when the line is not a control-flow line.
+bool Lexer::lexControlFlow(const std::string& line, int line_number, std::vector<Token>& tokenLine) {
+    std::string rest = line;
+    bool closes = false;
+    if (rest[0] == '}') {
+        if (scopes.empty()) {
+            fail(line_number, "unexpected '}'");
+        }
+        for (const auto& name : scopes.back()) exprTable.erase(name);
+        scopes.pop_back();
+        canElse = blockIsIf.back();
+        blockIsIf.pop_back();
+        tokenLine.push_back({TokenType::RBRACE, "}"});
+        closes = true;
+        rest = trimLine(rest.substr(1));
+        if (rest.empty()) {
+            return true;
+        }
+    }
+    bool isElse = startsWithWord(rest, "else");
+    if (isElse) {
+        if (!canElse) {
+            fail(line_number, "'else' without a previous 'if'");
+        }
+        tokenLine.push_back({TokenType::ELSE, "else"});
+        rest = trimLine(rest.substr(4));
+    } else if (closes) {
+        fail(line_number, "unexpected '" + rest + "' after '}'");
+    }
+    bool isIf = startsWithWord(rest, "if");
+    if (!isElse && !isIf) {
+        return false;
+    }
+    if (isIf) {
+        tokenLine.push_back({TokenType::IF, "if"});
+        rest = trimLine(rest.substr(2));
+        if (rest.empty() || rest[0] != '(') {
+            fail(line_number, "expected '(' after 'if'");
+        }
+        size_t depth = 0, close = std::string::npos;
+        for (size_t i = 0; i < rest.size(); i++) {
+            if (rest[i] == '(') depth++;
+            if (rest[i] == ')' && --depth == 0) {
+                close = i;
+                break;
+            }
+        }
+        if (close == std::string::npos) {
+            fail(line_number, "expected ')' after condition");
+        }
+        std::string cond = trimLine(rest.substr(1, close - 1));
+        if (cond.empty()) {
+            fail(line_number, "expected condition inside 'if ( )'");
+        }
+        tokenLine.push_back({TokenType::LPAREN, "("});
+        lexCondition(cond, line_number, tokenLine);
+        tokenLine.push_back({TokenType::RPAREN, ")"});
+        rest = trimLine(rest.substr(close + 1));
+    }
+    if (rest != "{") {
+        fail(line_number, std::string("expected '{' after '") + (isIf ? "if (...)" : "else") + "'");
+    }
+    tokenLine.push_back({TokenType::LBRACE, "{"});
+    scopes.push_back({});
+    blockIsIf.push_back(isIf);
+    canElse = false;
+    return true;
+}
+
+void Lexer::lexCondition(const std::string& cond, int line_number, std::vector<Token>& tokenLine) {
+    int depth = 0;
+    size_t pos = 0;
+    while (pos < cond.size()) {
+        char c = cond[pos];
+        char next = pos + 1 < cond.size() ? cond[pos + 1] : '\0';
+        if (std::isspace(c)) {
+            pos++;
+        } else if (std::isdigit(c) || c == '.') {
+            size_t start = pos;
+            while (pos < cond.size() && (std::isdigit(cond[pos]) || cond[pos] == '.')) pos++;
+            tokenLine.push_back({TokenType::NUMBER, cond.substr(start, pos - start)});
+        } else if (std::isalpha(c) || c == '_') {
+            size_t start = pos;
+            while (pos < cond.size() && (std::isalnum(cond[pos]) || cond[pos] == '_')) pos++;
+            std::string name = cond.substr(start, pos - start);
+            auto it = exprTable.find(name);
+            if (it == exprTable.end() || it->second != TokenType::IDENTIFIER) {
+                fail(line_number, "undefined reference to '" + name + "'");
+            }
+            tokenLine.push_back({TokenType::IDENTIFIER, name});
+        } else if (c == '=' && next == '=') {
+            tokenLine.push_back({TokenType::EQUAL_EQUAL, "=="});
+            pos += 2;
+        } else if (c == '!' && next == '=') {
+            tokenLine.push_back({TokenType::NOT_EQUAL, "!="});
+            pos += 2;
+        } else if (c == '<' && next == '=') {
+            tokenLine.push_back({TokenType::LESS_EQUAL, "<="});
+            pos += 2;
+        } else if (c == '>' && next == '=') {
+            tokenLine.push_back({TokenType::GREATER_EQUAL, ">="});
+            pos += 2;
+        } else if (c == '&' && next == '&') {
+            tokenLine.push_back({TokenType::AND, "&&"});
+            pos += 2;
+        } else if (c == '|' && next == '|') {
+            tokenLine.push_back({TokenType::OR, "||"});
+            pos += 2;
+        } else if (c == '<') {
+            tokenLine.push_back({TokenType::LESS, "<"});
+            pos++;
+        } else if (c == '>') {
+            tokenLine.push_back({TokenType::GREATER, ">"});
+            pos++;
+        } else if (c == '!') {
+            tokenLine.push_back({TokenType::NOT, "!"});
+            pos++;
+        } else if (c == '+') {
+            tokenLine.push_back({TokenType::PLUS, "+"});
+            pos++;
+        } else if (c == '-') {
+            tokenLine.push_back({TokenType::MINUS, "-"});
+            pos++;
+        } else if (c == '*') {
+            tokenLine.push_back({TokenType::MULTIPLY, "*"});
+            pos++;
+        } else if (c == '/') {
+            tokenLine.push_back({TokenType::DIVIDE, "/"});
+            pos++;
+        } else if (c == '(') {
+            tokenLine.push_back({TokenType::LPAREN, "("});
+            depth++;
+            pos++;
+        } else if (c == ')') {
+            if (--depth < 0) {
+                fail(line_number, "unbalanced ')' in condition");
+            }
+            tokenLine.push_back({TokenType::RPAREN, ")"});
+            pos++;
+        } else if (c == '=') {
+            fail(line_number, "unexpected '=' in condition (use '==' to compare)");
+        } else {
+            fail(line_number, std::string("unexpected '") + c + "' in condition");
+        }
+    }
+    if (depth != 0) {
+        fail(line_number, "unbalanced '(' in condition");
+    }
 }
 
 std::vector<std::vector<Token>> Lexer::getTokens() {

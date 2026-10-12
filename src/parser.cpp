@@ -67,6 +67,16 @@ ASTNode* parse(const std::vector<Token>& tokens) {
             ASTNode* doubleNode = new ASTNode{token.type, token.value};
             root -> children.push_back(doubleNode);
         }
+        if (token.type == TokenType::IF || token.type == TokenType::ELSE ||
+            token.type == TokenType::LBRACE || token.type == TokenType::RBRACE ||
+            token.type == TokenType::LPAREN || token.type == TokenType::RPAREN ||
+            token.type == TokenType::EQUAL_EQUAL || token.type == TokenType::NOT_EQUAL ||
+            token.type == TokenType::LESS || token.type == TokenType::LESS_EQUAL ||
+            token.type == TokenType::GREATER || token.type == TokenType::GREATER_EQUAL ||
+            token.type == TokenType::AND || token.type == TokenType::OR ||
+            token.type == TokenType::NOT) {
+            root -> children.push_back(new ASTNode{token.type, token.value});
+        }
     }
     return root;
 }
@@ -117,6 +127,33 @@ std::string generateCCode(ASTNode* node) {
     }
     if (node -> type == TokenType::DIVIDE) {
         generatedCode += " / ";
+    }
+    if (node -> type == TokenType::IF) {
+        generatedCode += "if ";
+    }
+    if (node -> type == TokenType::ELSE) {
+        generatedCode += "else ";
+    }
+    if (node -> type == TokenType::LPAREN) {
+        generatedCode += "(";
+    }
+    if (node -> type == TokenType::RPAREN) {
+        generatedCode += ")";
+    }
+    if (node -> type == TokenType::LBRACE) {
+        generatedCode += " {\n";
+    }
+    if (node -> type == TokenType::RBRACE) {
+        generatedCode += "}\n";
+    }
+    if (node -> type == TokenType::EQUAL_EQUAL || node -> type == TokenType::NOT_EQUAL ||
+        node -> type == TokenType::LESS || node -> type == TokenType::LESS_EQUAL ||
+        node -> type == TokenType::GREATER || node -> type == TokenType::GREATER_EQUAL ||
+        node -> type == TokenType::AND || node -> type == TokenType::OR) {
+        generatedCode += " " + node -> value + " ";
+    }
+    if (node -> type == TokenType::NOT) {
+        generatedCode += "!";
     }
     for (auto* child : node -> children) {
         generatedCode += generateCCode(child);

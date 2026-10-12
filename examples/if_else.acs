@@ -1,0 +1,25 @@
+int score: 72;
+let bonus: 5;
+println("Score: " << score);
+
+if (score >= 90) {
+    println("Grade: A");
+} else if (score >= 70) {
+    println("Grade: B");
+    if (score + bonus >= 75) {
+        println("Bonus pushes it past 75");
+    }
+} else {
+    println("Grade: C");
+}
+
+if (score != 100 && bonus > 0) {
+    println("Not perfect, but has a bonus");
+}
+
+if (score == 100) {
+    println("Perfect score");
+}
+else {
+    println("Room to improve");
+}
