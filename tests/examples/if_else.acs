@@ -1,0 +1,39 @@
+int score: 72;
+let bonus: 5;
+
+if (score >= 90) {
+    println("A");
+} else if (score >= 70) {
+    println("B");
+    if (score + bonus >= 75) {
+        println("bonus past 75");
+    }
+} else {
+    println("C");
+}
+
+if (score != 100 && bonus > 0) {
+    println("and");
+}
+
+if (score == 100 || !(bonus < 10)) {
+    println("wrong branch");
+}
+else {
+    println("else on its own line");
+}
+
+if (score > 0) {
+    let y: 2;
+    if (score > 1000) {
+        println("unreachable");
+    }
+    score: score + y;
+} else {
+    println("not taken");
+}
+
+if (score > 0) {
+    let y: 3;
+    println(score + y);
+}

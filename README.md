@@ -86,7 +86,7 @@ if (score >= 90) {
 - Any number of `else if` branches is allowed, `else` is optional, and blocks can be nested.
 - Variables declared inside a block exist only in that block.
 
-A complete example is in [`examples/if_else.acs`](examples/if_else.acs). From the `src` directory, run it with `../build/acs ../examples/if_else.acs`.
+A complete example is in [`examples/if_else.acs`](examples/if_else.acs). After `make`, run it from the `examples` directory with `mkdir -p ../build && ../acs if_else.acs`. The test case `tests/examples/if_else.acs` covers nesting, `else` on its own line and block-scoped variables.
 
 To compile this file, simply run the `acs` executable with the ACS file as an argument. Note that further usage instructions will be provided as the language features are expanded.
 
