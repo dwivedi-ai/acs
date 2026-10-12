@@ -1,0 +1,6 @@
+int a;
+int b;
+scan(a);
+scan(b);
+println("sum: " << a + b);
+println("product: " << a * b);
